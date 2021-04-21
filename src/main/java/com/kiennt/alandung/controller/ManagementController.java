@@ -3,16 +3,17 @@ package com.kiennt.alandung.controller;
 import com.kiennt.alandung.entity.Product;
 import com.kiennt.alandung.service.AuthenticationService;
 import com.kiennt.alandung.service.ProductService;
+import com.kiennt.alandung.util.FileUploadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -49,12 +50,18 @@ public class ManagementController {
     }
 
     @PostMapping("/create-product")
-    public String createProduct(@Valid Product product, BindingResult result, Model model) {
+    public String createProduct(@Valid Product product, @RequestParam("image") MultipartFile multipartFile, BindingResult result) throws IOException {
         if (result.hasErrors()) {
-            return "create-product";
+            return "product/create-product";
         }
-        productService.upsert(product);
-        return "redirect:/list-product";
+        String productImage = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        product.setImageName(productImage);
+        Product productSaved = productService.upsert(product);
+
+        String uploadDir = "product-photos/" + productSaved.getId();
+        FileUploadUtils.saveFile(uploadDir, productImage, multipartFile);
+
+        return "redirect:/product/list-product";
     }
 
     @GetMapping("/update-product/{id}")
@@ -66,16 +73,21 @@ public class ManagementController {
         }
 
         model.addAttribute("product", product);
-        return "update-product";
+        return "product/update-product";
     }
 
     @PostMapping("/update-product")
-    public String updateProduct(@Valid Product product, BindingResult result, Model model) {
+    public String updateProduct(@Valid Product product, @RequestParam("image") MultipartFile multipartFile, BindingResult result) throws IOException {
         if (result.hasErrors()) {
             return "update-product";
         }
-        productService.upsert(product);
-        return "redirect:/list-product";
+        String productImage = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        product.setImageName(productImage);
+        Product productUpdated = productService.upsert(product);
+
+        String uploadDir = "product-photos/" + productUpdated.getId();
+        FileUploadUtils.saveFile(uploadDir, productImage, multipartFile);
+        return "redirect:/product/list-product";
     }
 
     @PostMapping("delete/{id}")
@@ -87,6 +99,6 @@ public class ManagementController {
         }
 
         productService.deleteProduct(product);
-        return "redirect:/list-product";
+        return "redirect:/product/list-product";
     }
 }
