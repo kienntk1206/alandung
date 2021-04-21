@@ -33,14 +33,14 @@ public class ManagementController {
 //            return "redirect:/login-page";
 //        }
 
-        return "list-product";
+        return "product/list-product";
     }
 
     @GetMapping("/product-list")
     public String getProducts(Model model) {
         List<Product> products = productService.getProducts();
         model.addAttribute("products", products);
-        return "list-product";
+        return "product/list-product";
     }
 
     @GetMapping("/create-product")

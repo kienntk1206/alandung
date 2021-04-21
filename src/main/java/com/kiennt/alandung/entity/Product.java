@@ -67,7 +67,6 @@ public class Product extends DateAudit {
         this.shortDescription = shortDescription;
     }
 
-
     public String getLongDescription() {
         return longDescription;
     }
