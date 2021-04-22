@@ -49,7 +49,7 @@ public class ManagementController {
         return "create-product";
     }
 
-    @PostMapping("/create-product")
+    @PostMapping("/submit-create-product")
     public String createProduct(@Valid Product product, @RequestParam("image") MultipartFile multipartFile, BindingResult result) throws IOException {
         if (result.hasErrors()) {
             return "product/create-product";
@@ -90,7 +90,7 @@ public class ManagementController {
         return "redirect:/product/list-product";
     }
 
-    @PostMapping("delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") Long id) {
         Product product = productService.getProductById(id);
 

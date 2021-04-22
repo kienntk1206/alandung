@@ -13,7 +13,7 @@
     <!-- Custom fonts for this template -->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-            rel="stylesheet">
+          rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
@@ -36,46 +36,29 @@
             <div th:replace="fragment/top-bar :: top-bar"></div>
             <!-- Begin Page Content -->
             <div class="container-fluid">
-                <!-- Page Heading -->
-                <h1 class="h3 mb-2 text-gray-800">Product List</h1>
-                <!-- DataTales Example -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-<!--                        <h6 class="m-0 font-weight-bold text-primary">Các sản phẩm hiển thị</h6>-->
-                        <a th:href=${/management/create-product} class="btn btn-primary btn-user btn-block">
-                            Create Product
-                        </a>
+                <h1 class="h3 mb-4 text-gray-800">Create New Product</h1>
+                <form class="user" action="#" th:action="@{/management/submit-create-product}" th:object="${product}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" id="productName"
+                               placeholder="Product Name" th:field="*{name}">
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Product Name</th>
-                                    <th>Price</th>
-                                    <th>Product Image</th>
-                                    <th>Short Description</th>
-                                    <th>Long Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="product : ${products}">
-                                    <td th:text="${product.id}"></td>
-                                    <td th:text="${product.name}"></td>
-                                    <td th:text="${product.price}"></td>
-                                    <td th:text="${product.imageName}"></td>
-                                    <td th:text="${product.short_description}"></td>
-                                    <td th:text="${product.long_description}"></td>
-                                    <td><a th:href="@{/management/update-product/{id}(id=${product.id})}" class="btn btn-primary"><i class="fas fa-user-edit ml-2"></i></a></td>
-                                    <td><a th:href="@{/management/delete/{id}(id=${product.id})}" class="btn btn-primary"><i class="fas fa-user-times ml-2"></i></a></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" id="productPrice"
+                               placeholder="Price" th:field="*{price}">
                     </div>
-                </div>
-
+                    <div class="form-group">
+                        <input type="file" name="image" accept="image/png, image/jpeg"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" id="shortDesc"
+                               placeholder="Short Description" th:field="*{shortDescription}">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" id="longDesc"
+                               placeholder="Long Description" th:field="*{longDescription}">
+                    </div>
+                    <input type="submit" value="Create" class="btn btn-primary btn-user btn-block">
+                </form>
             </div>
             <!-- /.container-fluid -->
         </div>
