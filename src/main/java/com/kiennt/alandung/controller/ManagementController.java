@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/management")
@@ -45,8 +46,8 @@ public class ManagementController {
     }
 
     @GetMapping("/create-product")
-    public String showCreateProductForm() {
-        return "create-product";
+    public String showCreateProductForm(Product product) {
+        return "product/create-product";
     }
 
     @PostMapping("/submit-create-product")
@@ -58,47 +59,54 @@ public class ManagementController {
         product.setImageName(productImage);
         Product productSaved = productService.upsert(product);
 
-        String uploadDir = "product-photos/" + productSaved.getId();
+        String uploadDir = "product-photos/";
         FileUploadUtils.saveFile(uploadDir, productImage, multipartFile);
 
-        return "redirect:/product/list-product";
+        return "redirect:/management/product-list";
     }
 
-    @GetMapping("/update-product/{id}")
+    @GetMapping("/show-update-product/{id}")
     public String showUpdateProductForm(@PathVariable("id") Long id, Model model) {
-        Product product = productService.getProductById(id);
+        Optional<Product> product = productService.getProductById(id);
 
-        if (product == null) {
+        if (!product.isPresent()) {
             return "Invalid";
         }
 
-        model.addAttribute("product", product);
+        model.addAttribute("product", product.get());
         return "product/update-product";
     }
 
-    @PostMapping("/update-product")
-    public String updateProduct(@Valid Product product, @RequestParam("image") MultipartFile multipartFile, BindingResult result) throws IOException {
+    @PostMapping("/update-product/{id}")
+    public String updateProduct(@PathVariable("id") Long id, @Valid Product product, @RequestParam("image") MultipartFile multipartFile, BindingResult result) throws IOException {
         if (result.hasErrors()) {
             return "update-product";
         }
-        String productImage = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        product.setImageName(productImage);
-        Product productUpdated = productService.upsert(product);
+        Optional<Product> existProduct = productService.getProductById(id);
+        String imageName = existProduct.get().getImageName();
 
-        String uploadDir = "product-photos/" + productUpdated.getId();
-        FileUploadUtils.saveFile(uploadDir, productImage, multipartFile);
-        return "redirect:/product/list-product";
+        String productImage = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        if(!StringUtils.isEmpty(productImage)) {
+            product.setImageName(productImage);
+            String uploadDir = "product-photos/";
+            FileUploadUtils.saveFile(uploadDir, productImage, multipartFile);
+            productService.upsert(product);
+            return "redirect:/management/product-list";
+        }
+        product.setImageName(imageName);
+        productService.upsert(product);
+        return "redirect:/management/product-list";
     }
 
-    @PostMapping("/delete/{id}")
+    @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") Long id) {
-        Product product = productService.getProductById(id);
+        Optional<Product> product = productService.getProductById(id);
 
-        if (product == null) {
+        if (!product.isPresent()) {
             return "Invalid";
         }
 
-        productService.deleteProduct(product);
-        return "redirect:/product/list-product";
+        productService.deleteProduct(product.get());
+        return "redirect:/management/product-list";
     }
 }

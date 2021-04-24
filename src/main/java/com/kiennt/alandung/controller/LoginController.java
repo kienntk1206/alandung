@@ -86,7 +86,7 @@ public class LoginController {
         CookieUtils.addCookie(response, "jwtToken", jwtToken);
 
         if (authenticationService.getAuthentication() != null) {
-            return "redirect:/management/list";
+            return "redirect:/management/product-list";
         }
 
         return "redirect:/login-page";
