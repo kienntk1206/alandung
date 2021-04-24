@@ -8,10 +8,7 @@ import com.kiennt.alandung.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ShoppingCartService {
@@ -24,6 +21,10 @@ public class ShoppingCartService {
 
     public List<CartItem> getCartItemsByCustomer(Customer customer) {
         return cartItemRepository.findByCustomer(customer);
+    }
+
+    public List<CartItem> getCartItems() {
+        return cartItemRepository.findAll();
     }
 
     public Integer addProductToCart(Long productId, Integer quantity, Customer customer) {

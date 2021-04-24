@@ -57,7 +57,6 @@ public class ManagementController {
         }
         String productImage = StringUtils.cleanPath(multipartFile.getOriginalFilename());
         product.setImageName(productImage);
-        Product productSaved = productService.upsert(product);
 
         String uploadDir = "product-photos/";
         FileUploadUtils.saveFile(uploadDir, productImage, multipartFile);
