@@ -1,6 +1,7 @@
 package com.kiennt.alandung.entity;
 
 import com.kiennt.alandung.entity.audit.DateAudit;
+import org.apache.commons.math3.random.RandomDataGenerator;
 
 import javax.persistence.*;
 
@@ -77,7 +78,19 @@ public class Product extends DateAudit {
 
     @Transient
     public String getPathImageProduct() {
-        if (imageName == null || id == null) return null;
-        return "/product-photos/" + id + "/" + imageName;
+        if (imageName == null || id == null) {
+            return null;
+        }
+        return "/product-photos/" + imageName;
+    }
+
+    @Transient
+    public Integer getPositionImage() {
+        if (imageName == null || id == null) {
+            return null;
+        }
+
+        RandomDataGenerator generator  = new RandomDataGenerator();
+        return generator.nextInt(2, 3);
     }
 }

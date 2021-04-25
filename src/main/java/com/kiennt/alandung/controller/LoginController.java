@@ -53,18 +53,18 @@ public class LoginController {
         return "login-page";
     }
 
-    @GetMapping("/")
-    public ModelAndView index(Model model){
-        ModelAndView mav = new ModelAndView("index");
-        List<UserLogin> userLogins = userLoginService.getUserLogins();
-
-        Optional<UserLogin> userLogin = userLogins.stream().findFirst();
-
-        userLogin.ifPresent(user -> mav.addObject("userLogin", user.getFirstName().concat(CommonConstant.EMPTY_STRING)
-                                                                                    .concat(user.getLastName())));
-
-        return mav;
-    }
+//    @GetMapping("/")
+//    public ModelAndView index(Model model){
+//        ModelAndView mav = new ModelAndView("index");
+//        List<UserLogin> userLogins = userLoginService.getUserLogins();
+//
+//        Optional<UserLogin> userLogin = userLogins.stream().findFirst();
+//
+//        userLogin.ifPresent(user -> mav.addObject("userLogin", user.getFirstName().concat(CommonConstant.EMPTY_STRING)
+//                                                                                    .concat(user.getLastName())));
+//
+//        return mav;
+//    }
 
     @PostMapping("/login")
     @Transactional
