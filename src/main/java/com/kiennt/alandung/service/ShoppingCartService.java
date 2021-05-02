@@ -1,14 +1,15 @@
 package com.kiennt.alandung.service;
 
-import com.kiennt.alandung.entity.CartItem;
-import com.kiennt.alandung.entity.Customer;
-import com.kiennt.alandung.entity.Product;
+import com.kiennt.alandung.entity.*;
+import com.kiennt.alandung.entity.enums.Status;
 import com.kiennt.alandung.repository.CartItemRepository;
 import com.kiennt.alandung.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ShoppingCartService {
@@ -23,8 +24,21 @@ public class ShoppingCartService {
         return cartItemRepository.findByCustomer(customer);
     }
 
+    public void upsertCartItem(CartItem cartItem) {
+        cartItemRepository.save(cartItem);
+    }
+
     public List<CartItem> getCartItems() {
         return cartItemRepository.findAll();
+    }
+
+    public List<CartItem> getCartItemsByStatus(Status status) {
+        if (status == null) {
+            return cartItemRepository.findAll();
+        }
+        return cartItemRepository.findAll().stream()
+                .filter(cartItem -> cartItem.getStatus().equals(status))
+                .collect(Collectors.toList());
     }
 
     public Integer addProductToCart(Long productId, Integer quantity, Customer customer) {
@@ -34,7 +48,7 @@ public class ShoppingCartService {
 
         CartItem cartItem = cartItemRepository.findByCustomerAndProduct(customer, product);
 
-        if (cartItem != null) {
+        if (cartItem != null && cartItem.getStatus().equals(Status.PENDING)) {
             addedQuantity = cartItem.getQuantity() + quantity;
             cartItem.setQuantity(addedQuantity);
         } else {
@@ -42,9 +56,46 @@ public class ShoppingCartService {
             cartItem.setQuantity(quantity);
             cartItem.setCustomer(customer);
             cartItem.setProduct(product);
+            cartItem.setStatus(Status.PENDING);
         }
         cartItemRepository.save(cartItem);
 
         return  addedQuantity;
+    }
+
+    public void addToCart(Long productId) {
+        int quantity = 1;
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isPresent()) {
+            CartItem cartItem = cartItemRepository.findByProduct(product.get());
+            if (cartItem != null && cartItem.getStatus().equals(Status.PENDING)) {
+                cartItem.setProduct(product.get());
+                cartItem.setQuantity(cartItem.getQuantity() + quantity);
+            } else {
+                cartItem = new CartItem();
+                cartItem.setProduct(product.get());
+                cartItem.setQuantity(quantity);
+                cartItem.setStatus(Status.PENDING);
+            }
+            cartItemRepository.save(cartItem);
+        }
+    }
+
+    public Double getTotalPrice(List<CartItem> cartItems) {
+        List<Double> totalItems = new ArrayList<>();
+        cartItems.forEach(cartItem -> {
+            double totalItem = cartItem.getProduct().getPrice() * cartItem.getQuantity();
+            totalItems.add(totalItem);
+        });
+        return totalItems.stream().mapToDouble(Double::doubleValue).sum();
+    }
+
+    public ModelAndView getCartItemsPage() {
+        List<CartItem> cartItems = getCartItemsByStatus(Status.PENDING);
+        ModelAndView mav = new ModelAndView("cycle-cart");
+        mav.addObject("cartItems", cartItems);
+        Double totalPrice = getTotalPrice(cartItems);
+        mav.addObject("total", totalPrice);
+        return mav;
     }
 }

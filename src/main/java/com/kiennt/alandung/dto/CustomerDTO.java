@@ -1,38 +1,13 @@
-package com.kiennt.alandung.entity;
+package com.kiennt.alandung.dto;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "customer")
-public class Customer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class CustomerDTO {
     private Integer id;
-
     private String firstName;
-
     private String lastName;
-
     private String address;
-
     private String phoneNumber;
-
     private String email;
-
     private String message;
-
-    public Customer() {
-    }
-
-    public Customer(String firstName, String lastName, String address, String phoneNumber, String email, String message) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.message = message;
-    }
 
     public Integer getId() {
         return id;

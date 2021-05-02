@@ -66,10 +66,23 @@ public class LoginController {
 //        return mav;
 //    }
 
+    @GetMapping("/test")
+    public ModelAndView testlogin() {
+        ModelAndView mav = new ModelAndView("test");
+        List<UserLogin> userLogins = userLoginService.getUserLogins();
+
+        Optional<UserLogin> userLogin = userLogins.stream().findFirst();
+
+        userLogin.ifPresent(user -> mav.addObject("userLogin", user.getFirstName().concat(CommonConstant.EMPTY_STRING)
+                .concat(user.getLastName())));
+
+        return mav;
+    }
+
     @PostMapping("/login")
     @Transactional
     public String doLogin(@RequestParam("email") String email,
-                        @RequestParam("password") String password, HttpServletResponse response){
+                          @RequestParam("password") String password, HttpServletResponse response){
         Optional<User> users = userRepository.findByEmail(email);
 
         if(!users.isPresent() || !passwordEncoder.matches(password ,users.get().getPassword())) {
@@ -90,7 +103,7 @@ public class LoginController {
         }
 
         return "redirect:/login-page";
-}
+    }
 
     @PostMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {

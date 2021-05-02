@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org">
+<head>
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>Cycle Shopping Cart</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/cycle/css/bootstrap.min.css}">
+    <!-- style css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/cycle/css/style.css}">
+    <!-- Responsive-->
+    <link rel="stylesheet" th:href="@{/cycle/css/responsive.css}">
+    <!-- fevicon -->
+    <link rel="icon" th:href="@{/cycle/images/fevicon.png}" type="image/gif" />
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{/cycle/css/jquery.mCustomScrollbar.min.css}">
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <!-- owl stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Raleway:400,700,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/cycle/css/owl.carousel.min.css}">
+    <link rel="stylesoeet" th:href="@{/cycle/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+</head>
+<body>
+<!-- header section start -->
+<div class="header_section header_bg">
+    <div th:replace="fragment/cycle-header :: cycle-header"></div>
+    <!-- banner section start -->
+<!--    <div th:replace="fragment/cycle-banner :: cycle-banner"></div>-->
+    <!-- banner section end -->
+</div>
+<!-- header section end -->
+<!-- cycle section start -->
+<div class="cycle_section layout_padding">
+    <div class="container">
+        <h1 class="cycle_taital">Shopping Cart</h1>
+
+        <div th:each="cartItem : ${cartItems}">
+            <div th:class="'cycle_section_' + ${cartItem.product.getPositionImage} + ' ' + 'layout_padding'">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="box_main">
+                            <h6 class="number_text" th:text="${cartItem.id}"></h6>
+                            <div class="image_2"><img th:src="@{${cartItem.product.getPathImageProduct}}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h1 class="cycles_text" th:text="${cartItem.product.name}"></h1>
+                        <p class="lorem_text" th:text="'Quantity: ' + ${cartItem.quantity}"></p>
+<!--                        <div class="btn_main">-->
+<!--                            <div class="buy_bt"><a href="#">Buy Now</a></div>-->
+<!--                            <h4 class="price_text">Price <span style=" color: #f7c17b">$</span> <span-->
+<!--                                    style=" color: #325662">200</span></h4>-->
+<!--                        </div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h2 class="cycles_text" th:if="${cartItems.size == 0}">Cart is empty</h2>
+        <h1 class="cycles_text" th:if="${cartItems.size > 0}" th:text="'Total: ' + ${total}"></h1>
+        <div class="read_btn_main">
+            <div class="read_bt" th:if="${cartItems.size > 0}"><a th:href="@{/cart/contact#contact}">Confirm Payment</a></div>
+<!--            <div class="read_bt"><a th:href="@{/pay/{total}(total=${total})}">Payment with Paypal</a></div>-->
+<!--            <form method="post" th:action="@{/paypal/pay/{total}(total=${total})}">-->
+<!--                <button type="submit" class="read_bt"> Payment with Paypal </button>-->
+<!--            </form>-->
+        </div>
+    </div>
+</div>
+<!-- copyright section start -->
+<div th:replace="fragment/cycle-copyright :: cycle-copyright"></div>
+<!-- copyright section end -->
+<!-- Javascript files-->
+<script th:src="@{/cycle/js/jquery.min.js}"></script>
+<script th:src="@{/cycle/js/popper.min.js}"></script>
+<script th:src="@{/cycle/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/cycle/js/jquery-3.0.0.min.js}"></script>
+<script th:src="@{/cycle/js/plugin.js}"></script>
+<!-- sidebar -->
+<script th:src="@{/cycle/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+<script th:src="@{/cycle/js/custom.js}"></script>
+<!-- javascript -->
+<script th:src="@{/cycle/js/owl.carousel.js}"></script>
+<script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+<script>
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+        document.getElementById("main").style.marginLeft = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main").style.marginLeft= "0";
+
+    }
+
+    $("#main").click(function(){
+        $("#navbarSupportedContent").toggleClass("nav-normal")
+    })
+</script>
+</body>
+</html>

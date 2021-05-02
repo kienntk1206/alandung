@@ -1,8 +1,10 @@
 package com.kiennt.alandung.controller;
 
+import com.kiennt.alandung.entity.CartItem;
 import com.kiennt.alandung.entity.Product;
 import com.kiennt.alandung.service.AuthenticationService;
 import com.kiennt.alandung.service.ProductService;
+import com.kiennt.alandung.service.ShoppingCartService;
 import com.kiennt.alandung.util.FileUploadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -26,6 +29,9 @@ public class ManagementController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ShoppingCartService shoppingCartService;
 
     @GetMapping("/list")
     public String view() {
@@ -60,6 +66,7 @@ public class ManagementController {
 
         String uploadDir = "product-photos/";
         FileUploadUtils.saveFile(uploadDir, productImage, multipartFile);
+        productService.upsert(product);
 
         return "redirect:/management/product-list";
     }
@@ -107,5 +114,14 @@ public class ManagementController {
 
         productService.deleteProduct(product.get());
         return "redirect:/management/product-list";
+    }
+
+    @GetMapping("/orders")
+    public ModelAndView getShoppingCartItems() {
+        ModelAndView mav = new ModelAndView("product/order-list");
+        List<CartItem> cartItems = shoppingCartService.getCartItems();
+
+        mav.addObject("cartItems", cartItems);
+        return mav;
     }
 }

@@ -1,5 +1,7 @@
 package com.kiennt.alandung.entity;
 
+import com.kiennt.alandung.entity.enums.Status;
+
 import javax.persistence.*;
 
 @Entity
@@ -16,9 +18,13 @@ public class CartItem {
 
     private Integer quantity;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id")
     private Customer customer;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     public Long getId() {
         return id;
@@ -50,5 +56,13 @@ public class CartItem {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
