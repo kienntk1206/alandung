@@ -117,10 +117,10 @@ public class ManagementController {
     }
 
     @GetMapping("/orders")
-    public ModelAndView getShoppingCartItems() {
+    public ModelAndView getOrders() {
         ModelAndView mav = new ModelAndView("product/order-list");
         List<CartItem> cartItems = shoppingCartService.getCartItems();
-
+        mav.addObject("service", shoppingCartService);
         mav.addObject("cartItems", cartItems);
         return mav;
     }

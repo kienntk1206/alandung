@@ -24,6 +24,10 @@ public class ShoppingCartService {
         return cartItemRepository.findByCustomer(customer);
     }
 
+    public CartItem getCartItemByCustomerAndProduct(Customer customer, Product product) {
+        return cartItemRepository.findByCustomerAndProduct(customer, product);
+    }
+
     public void upsertCartItem(CartItem cartItem) {
         cartItemRepository.save(cartItem);
     }
