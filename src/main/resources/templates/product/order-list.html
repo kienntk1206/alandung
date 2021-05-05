@@ -57,19 +57,20 @@
                                     <th>Product</th>
                                     <th>Price</th>
                                     <th>Quantity</th>
-                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th>Customer Name</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="cartItem : ${cartItems}">
-                                    <td th:text="${product.id}"></td>
+                                    <td th:text="${cartItem.product.id}"></td>
                                     <td th:text="${cartItem.product.name}"></td>
                                     <td th:text="${cartItem.product.price}"></td>
                                     <td th:text="${cartItem.quantity}"></td>
-                                    <td th:text="${cartItem.customer.firstName + ' ' + cartItem.customer.firstName}">
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                        View detail
-                                        </button>
+                                    <td th:text="${cartItem.status}"></td>
+                                    <td th:text="${cartItem.customer.getFullName}"></td>
+                                    <td align="center">
+                                        <a class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Show Detail</a>
                                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
@@ -80,17 +81,44 @@
                                                         </button>
                                                     </div>
                                                     <div class="modal-body" th:with="item=${service.getCartItemByCustomerAndProduct(cartItem.customer, cartItem.product)}">
-                                                        <p th:if="${item != null}" th:text="${item.customer.firstName}"></p>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label">Name</label>
+                                                            <div class="col-sm-8">
+                                                                <span th:if="${item != null}" th:text="${item.customer.getFullName}" class="form-control-plaintext"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label">Email</label>
+                                                            <div class="col-sm-8">
+                                                                <span th:if="${item != null}" th:text="${item.customer.email}" class="form-control-plaintext"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label">Phone Number</label>
+                                                            <div class="col-sm-8">
+                                                                <span th:if="${item != null}" th:text="${item.customer.phoneNumber}" class="form-control-plaintext"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label">Address</label>
+                                                            <div class="col-sm-8">
+                                                                <span th:if="${item != null}" th:text="${item.customer.address}" class="form-control-plaintext"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label">Address</label>
+                                                            <div class="col-sm-8">
+                                                                <span th:if="${item.customer.message != null}" th:text="${item.customer.message}" class="form-control-plaintext"></span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Save changes</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td th:text="${cartItem.status}"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -150,6 +178,9 @@
 
 <!-- Page level custom scripts -->
 <script th:src="@{/js/demo/datatables-demo.js}"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 </body>
 </html>

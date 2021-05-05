@@ -1,5 +1,7 @@
 package com.kiennt.alandung.entity;
 
+import com.kiennt.alandung.util.CommonConstant;
+
 import javax.persistence.*;
 
 @Entity
@@ -88,5 +90,9 @@ public class Customer {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getFullName() {
+        return this.firstName + CommonConstant.ONE_SPACE + this.lastName;
     }
 }
