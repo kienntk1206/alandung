@@ -91,37 +91,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().disable()
-                .exceptionHandling()
-                    .authenticationEntryPoint(unauthorizedHandler)
-                    .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.csrf().disable();
+        http.exceptionHandling()
+                .authenticationEntryPoint(unauthorizedHandler)
                 .and()
-            .authorizeRequests()
-                .antMatchers("/",
-                        "/favicon.ico",
-                        "/**/*.png",
-                        "/**/*.gif",
-                        "/**/*.svg",
-                        "/**/*.jpg",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js")
-                        .permitAll()
-                .antMatchers("/management").authenticated()
-                .anyRequest().permitAll()
-                .and()
-                .formLogin()
-                    .loginPage("/login-page")
-                    .usernameParameter("email")
-                    .passwordParameter("password")
-                    .defaultSuccessUrl("/management/product-list", true)
-                .permitAll()
-                .and()
-                .logout().logoutSuccessUrl("/login-page").permitAll()
-                .and()
-                .oauth2Login()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        // The pages does not require login
+        http.authorizeRequests().antMatchers("/", "/login-page", "/logout").permitAll();
+        http.authorizeRequests().antMatchers("/management").access("hasRole('ROLE_ADMIN')");
+        http.authorizeRequests().and().exceptionHandling().accessDeniedPage("/403");
+
+        http.authorizeRequests()
+                .and().formLogin()//
+                .loginProcessingUrl("/management/product-list") // Submit URL
+                .loginPage("/login-page")//
+                .defaultSuccessUrl("/product-list")//
+                .failureUrl("/login?error=true")//
+                .usernameParameter("email")//
+                .passwordParameter("password")
+                // Config for Logout Page
+                .and().logout().logoutUrl("/logout").logoutSuccessUrl("/logoutSuccessful");
+
+        // Oauth2
+        http.oauth2Login()
                     .loginPage("/login-page")
                     .userInfoEndpoint()
                     .userService(customOAuth2UserService)
