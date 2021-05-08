@@ -47,6 +47,11 @@ public class ManagementController {
 
     @GetMapping("/product-list")
     public String getProducts(Model model) {
+        boolean authenticated = authenticationService.isAuthenticated();
+
+        if(!authenticated) {
+            return "redirect:/login-page";
+        }
         List<Product> products = productService.getProducts();
         model.addAttribute("products", products);
         return "product/list-product";

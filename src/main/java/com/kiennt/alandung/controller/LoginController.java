@@ -82,18 +82,14 @@ public class LoginController {
     @PostMapping("/login")
     @Transactional
     public String doLogin(@RequestParam("email") String email,
-                          @RequestParam("password") String password, HttpServletResponse response){
+                          @RequestParam("password") String password, HttpServletResponse response, HttpServletRequest request){
         Optional<User> users = userRepository.findByEmail(email);
 
         if(!users.isPresent() || !passwordEncoder.matches(password ,users.get().getPassword())) {
             return null;
         }
 
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                email, password
-        ));
-
-        authenticationService.setAuthentication(authentication);
+        Authentication authentication = authenticationService.setAuthentication(users.get(), request);
 
         String jwtToken = tokenProvider.generateToken(authentication);
         CookieUtils.addCookie(response, "jwtToken", jwtToken);
