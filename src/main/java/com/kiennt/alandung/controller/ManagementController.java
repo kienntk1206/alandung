@@ -34,17 +34,6 @@ public class ManagementController {
     @Autowired
     private ShoppingCartService shoppingCartService;
 
-    @GetMapping("/list")
-    public String view() {
-//        boolean authenticated = authenticationService.isAuthenticated();
-
-//        if(!authenticated) {
-//            return "redirect:/login-page";
-//        }
-
-        return "product/list-product";
-    }
-
     @GetMapping("/product-list")
     public String getProducts(Model model) {
         boolean authenticated = authenticationService.isAuthenticated();
@@ -59,11 +48,17 @@ public class ManagementController {
 
     @GetMapping("/create-product")
     public String showCreateProductForm(Product product) {
+        if(!authenticationService.isAuthenticated()) {
+            return "redirect:/login-page";
+        }
         return "product/create-product";
     }
 
     @PostMapping("/submit-create-product")
     public String createProduct(@Valid Product product, @RequestParam("image") MultipartFile multipartFile, BindingResult result) throws IOException {
+        if(!authenticationService.isAuthenticated()) {
+            return "redirect:/login-page";
+        }
         if (result.hasErrors()) {
             return "product/create-product";
         }
@@ -79,6 +74,9 @@ public class ManagementController {
 
     @GetMapping("/show-update-product/{id}")
     public String showUpdateProductForm(@PathVariable("id") Long id, Model model) {
+        if(!authenticationService.isAuthenticated()) {
+            return "redirect:/login-page";
+        }
         Optional<Product> product = productService.getProductById(id);
 
         if (!product.isPresent()) {
@@ -91,6 +89,9 @@ public class ManagementController {
 
     @PostMapping("/update-product/{id}")
     public String updateProduct(@PathVariable("id") Long id, @Valid Product product, @RequestParam("image") MultipartFile multipartFile, BindingResult result) throws IOException {
+        if(!authenticationService.isAuthenticated()) {
+            return "redirect:/login-page";
+        }
         if (result.hasErrors()) {
             return "update-product";
         }
@@ -112,6 +113,9 @@ public class ManagementController {
 
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") Long id) {
+        if(!authenticationService.isAuthenticated()) {
+            return "redirect:/login-page";
+        }
         Optional<Product> product = productService.getProductById(id);
 
         if (!product.isPresent()) {
@@ -124,6 +128,9 @@ public class ManagementController {
 
     @GetMapping("/orders")
     public ModelAndView getOrders() {
+        if(!authenticationService.isAuthenticated()) {
+            return new ModelAndView("redirect:/login-page");
+        }
         ModelAndView mav = new ModelAndView("product/order-list");
         List<CartItem> cartItems = shoppingCartService.getCartItems();
         mav.addObject("service", shoppingCartService);
