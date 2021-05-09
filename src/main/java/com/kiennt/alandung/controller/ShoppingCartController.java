@@ -2,10 +2,12 @@ package com.kiennt.alandung.controller;
 
 import com.kiennt.alandung.dto.CustomerDTO;
 import com.kiennt.alandung.entity.CartItem;
+import com.kiennt.alandung.entity.Product;
 import com.kiennt.alandung.entity.enums.Status;
 import com.kiennt.alandung.service.CustomerService;
 import com.kiennt.alandung.service.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -45,5 +47,15 @@ public class ShoppingCartController {
         List<CartItem> cartItems = shoppingCartService.getCartItemsByStatus(Status.PENDING);
         mav.addObject("cartItems", cartItems);
         return mav;
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*", maxAge = 3600)
+    @PostMapping("/update-quantity/{id}/{quantity}")
+    @ResponseBody
+    public ResponseEntity updateQuantity(@PathVariable("id") Long id, @PathVariable("quantity") Integer quantity) {
+        CartItem cartItem = shoppingCartService.getCartItemById(id);
+        cartItem.setQuantity(quantity);
+        shoppingCartService.upsertCartItem(cartItem);
+        return ResponseEntity.ok().build();
     }
 }

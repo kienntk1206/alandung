@@ -6,6 +6,7 @@ import com.kiennt.alandung.repository.CartItemRepository;
 import com.kiennt.alandung.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -19,6 +20,11 @@ public class ShoppingCartService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    public CartItem getCartItemById(Long id) {
+        Optional<CartItem> cartItem = cartItemRepository.findById(id);
+        return cartItem.orElse(null);
+    }
 
     public List<CartItem> getCartItemsByCustomer(Customer customer) {
         return cartItemRepository.findByCustomer(customer);
@@ -98,8 +104,11 @@ public class ShoppingCartService {
         List<CartItem> cartItems = getCartItemsByStatus(Status.PENDING);
         ModelAndView mav = new ModelAndView("cycle-cart");
         mav.addObject("cartItems", cartItems);
-        Double totalPrice = getTotalPrice(cartItems);
-        mav.addObject("total", totalPrice);
+        Double subTotal = getTotalPrice(cartItems);
+        mav.addObject("subTotal", subTotal);
+        Double shipping = 2.0;
+        mav.addObject("shipping", shipping);
+        mav.addObject("total", subTotal + shipping);
         return mav;
     }
 }

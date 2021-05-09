@@ -31,57 +31,101 @@
     <link rel="stylesheet" th:href="@{/cycle/css/owl.carousel.min.css}">
     <link rel="stylesoeet" th:href="@{/cycle/css/owl.theme.default.min.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <link rel="stylesheet" th:href="@{/cycle/css/cycle-cart.css}">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 </head>
 <body>
 <!-- header section start -->
+<!--<div class="header_section header_bg">-->
+<!--    <div th:replace="fragment/cycle-header :: cycle-header"></div>-->
+    <!-- banner section start -->
 <div class="header_section header_bg">
     <div th:replace="fragment/cycle-header :: cycle-header"></div>
     <!-- banner section start -->
-<!--    <div th:replace="fragment/cycle-banner :: cycle-banner"></div>-->
+<!--    <div th:replace="fragment/cycle-cart-banner :: cycle-cart-banner"></div>-->
     <!-- banner section end -->
 </div>
-<!-- header section end -->
-<!-- cycle section start -->
-<div class="cycle_section layout_padding">
-    <div class="container">
-        <h1 class="cycle_taital">Shopping Cart</h1>
-
-        <div th:each="cartItem : ${cartItems}">
-            <div th:class="'cycle_section_' + ${cartItem.product.getPositionImage} + ' ' + 'layout_padding'">
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">E-COMMERCE CART</h1>
+        </div>
+    </section>
+    <h2 class="cycles_text" th:if="${cartItems.size == 0}">Cart is empty</h2>
+    <div class="container mb-4" th:if="${cartItems.size > 0}">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="table-cart">
+                        <thead>
+                        <tr>
+<!--                            <th scope="col" style="width: 0.00%"></th>-->
+                            <th scope="col" style="width: 20.00%"></th>
+                            <th scope="col" style="width: 20.00%">Product</th>
+                            <th scope="col" style="width: 20.00%">Available</th>
+                            <th scope="col" class="text-center" style="width: 20.00%">Quantity</th>
+                            <th scope="col" class="text-right" style="width: 20.00%">Price</th>
+                            <th> </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="cartItem : ${cartItems}">
+<!--                            <td th:text="${cartItem.id}" id="cartId" style="display: none"></td>-->
+                            <td><img id="imgProduct" th:src="@{${cartItem.product.getPathImageProduct}}"></td>
+                            <td th:text="${cartItem.product.name}"></td>
+                            <td>In stock</td>
+                            <td>
+                                    <input id="quantity" class="form-control" type="text" th:value=${cartItem.quantity}>
+<!--                                    <a class="btn btn-outline-success btn-block" id="update-quantity">Update</a>-->
+                                    <button class="btn btn-outline-success btn-block" id="update-quantity" th:onclick="'javascript:updateQuantity(' + ${cartItem.id} + ');'">Update</button>
+                            </td>
+                            <td class="text-right" th:text="${cartItem.product.price}"></td>
+                            <td class="text-right"><button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button> </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Sub-Total</td>
+                            <td class="text-right" th:text="${subTotal}"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Shipping</td>
+                            <td class="text-right" th:text="${shipping}"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><strong>Total</strong></td>
+                            <td class="text-right"><strong th:text="${total}"></strong></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col mb-2">
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="box_main">
-                            <h6 class="number_text" th:text="${cartItem.id}"></h6>
-                            <div class="image_2"><img th:src="@{${cartItem.product.getPathImageProduct}}"></div>
-                        </div>
+                    <div class="col-sm-12  col-md-6">
+                        <th:block th:if="${cartItems.size > 0}">
+                            <a th:href="@{/}" class="btn btn-block btn-light">Continue Shopping</a>
+                        </th:block>
                     </div>
-                    <div class="col-md-6">
-                        <h1 class="cycles_text" th:text="${cartItem.product.name}"></h1>
-                        <p class="lorem_text" th:text="'Quantity: ' + ${cartItem.quantity}"></p>
-<!--                        <div class="btn_main">-->
-<!--                            <div class="buy_bt"><a href="#">Buy Now</a></div>-->
-<!--                            <h4 class="price_text">Price <span style=" color: #f7c17b">$</span> <span-->
-<!--                                    style=" color: #325662">200</span></h4>-->
-<!--                        </div>-->
+                    <div class="col-sm-12 col-md-6 text-right">
+                        <th:block th:if="${cartItems.size > 0}">
+                            <a th:href="@{/cart/contact#contact}" class="btn btn-lg btn-block btn-success text-uppercase">Checkout</a>
+                        </th:block>
                     </div>
                 </div>
             </div>
         </div>
-        <h2 class="cycles_text" th:if="${cartItems.size == 0}">Cart is empty</h2>
-        <h1 class="cycles_text" th:if="${cartItems.size > 0}" th:text="'Total: ' + ${total}"></h1>
-        <div class="read_btn_main">
-            <div class="read_bt" th:if="${cartItems.size > 0}"><a th:href="@{/cart/contact#contact}">Confirm Payment</a></div>
-<!--            <div class="read_bt"><a th:href="@{/pay/{total}(total=${total})}">Payment with Paypal</a></div>-->
-<!--            <form method="post" th:action="@{/paypal/pay/{total}(total=${total})}">-->
-<!--                <button type="submit" class="read_bt"> Payment with Paypal </button>-->
-<!--            </form>-->
-        </div>
     </div>
-</div>
-<!-- copyright section start -->
 <div th:replace="fragment/cycle-copyright :: cycle-copyright"></div>
-<!-- copyright section end -->
-<!-- Javascript files-->
 <script th:src="@{/cycle/js/jquery.min.js}"></script>
 <script th:src="@{/cycle/js/popper.min.js}"></script>
 <script th:src="@{/cycle/js/bootstrap.bundle.min.js}"></script>
@@ -107,7 +151,21 @@
 
     $("#main").click(function(){
         $("#navbarSupportedContent").toggleClass("nav-normal")
-    })
+    });
+
+    var contextPath = window.location.host;
+    // var cartItems = [[${cartItems}]];
+    // console.log(contextPath);
+
+
+    function updateQuantity(cartId) {
+        var quantity = $('#quantity').val();
+        $.post("/cart/update-quantity/" + cartId + "/" + quantity, function(data, status){
+            if (status == "success") {
+                $('#quantity').val(quantity);
+            }
+        });
+    }
 </script>
 </body>
 </html>
