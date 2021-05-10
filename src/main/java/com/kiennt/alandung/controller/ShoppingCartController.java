@@ -1,5 +1,6 @@
 package com.kiennt.alandung.controller;
 
+import com.kiennt.alandung.dto.CartResponseDTO;
 import com.kiennt.alandung.dto.CustomerDTO;
 import com.kiennt.alandung.entity.CartItem;
 import com.kiennt.alandung.entity.Product;
@@ -52,10 +53,15 @@ public class ShoppingCartController {
     @CrossOrigin(origins = "*", allowedHeaders = "*", maxAge = 3600)
     @PostMapping("/update-quantity/{id}/{quantity}")
     @ResponseBody
-    public ResponseEntity updateQuantity(@PathVariable("id") Long id, @PathVariable("quantity") Integer quantity) {
+    public ResponseEntity<CartResponseDTO> updateQuantity(@PathVariable("id") Long id, @PathVariable("quantity") Integer quantity) {
         CartItem cartItem = shoppingCartService.getCartItemById(id);
         cartItem.setQuantity(quantity);
         shoppingCartService.upsertCartItem(cartItem);
-        return ResponseEntity.ok().build();
+        Double subPrice = shoppingCartService.getTotalPrice(shoppingCartService.getCartItems());
+        CartResponseDTO cartResponse = new CartResponseDTO();
+        cartResponse.setSubTotal(subPrice);
+        cartResponse.setShipPrice(2.0);
+
+        return ResponseEntity.ok(cartResponse);
     }
 }

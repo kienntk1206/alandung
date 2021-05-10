@@ -87,7 +87,7 @@
                             <td></td>
                             <td></td>
                             <td>Sub-Total</td>
-                            <td class="text-right" th:text="${subTotal}"></td>
+                            <td class="text-right" th:text="${subTotal}" id="subTotal"></td>
                         </tr>
                         <tr>
                             <td></td>
@@ -95,7 +95,7 @@
                             <td></td>
                             <td></td>
                             <td>Shipping</td>
-                            <td class="text-right" th:text="${shipping}"></td>
+                            <td class="text-right" th:text="${shipping}" id="shipping"></td>
                         </tr>
                         <tr>
                             <td></td>
@@ -103,7 +103,7 @@
                             <td></td>
                             <td></td>
                             <td><strong>Total</strong></td>
-                            <td class="text-right"><strong th:text="${total}"></strong></td>
+                            <td class="text-right"><strong th:text="${total}" id="total"></strong></td>
                         </tr>
                         </tbody>
                     </table>
@@ -162,7 +162,14 @@
         var quantity = $('#quantity').val();
         $.post("/cart/update-quantity/" + cartId + "/" + quantity, function(data, status){
             if (status == "success") {
+                console.log(data.subTotal);
+                var subTotal = data.subTotal;
+                var shipPrice = data.shipPrice;
+                var total = subTotal + shipPrice;
                 $('#quantity').val(quantity);
+                $('#subTotal').html(subTotal);
+                $('#shipping').html(shipPrice);
+                $('#total').html(total);
             }
         });
     }
