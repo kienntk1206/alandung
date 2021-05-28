@@ -3,7 +3,6 @@ package com.kiennt.alandung.controller;
 import com.kiennt.alandung.dto.CustomerDTO;
 import com.kiennt.alandung.entity.CartItem;
 import com.kiennt.alandung.entity.Customer;
-import com.kiennt.alandung.entity.Product;
 import com.kiennt.alandung.entity.enums.Status;
 import com.kiennt.alandung.repository.CustomerRepository;
 import com.kiennt.alandung.service.PayPalService;
@@ -33,6 +32,7 @@ public class PaymentController {
 
     private static final String URL_PAYPAL_SUCCESS = "pay/success";
     private static final String URL_PAYPAL_CANCEL = "pay/cancel";
+    private static final Double SHIPPING_PRICE = 2.0;
     private static Customer customer;
 
     @Autowired
@@ -52,14 +52,15 @@ public class PaymentController {
         customer = customerMapper.toEntity(customerDTO);
         customerRepository.save(PaymentController.customer);
         List<CartItem> cartItems = shoppingCartService.getCartItemsByStatus(Status.PENDING);
-        Double totalPrice = shoppingCartService.getTotalPrice(cartItems);
+        Double totalPrice = shoppingCartService.getSubTotalPrice(cartItems);
+        Double total = totalPrice + SHIPPING_PRICE;
         String cancelUrl = PayPalUtils.getBaseURL(request) + "/" + URL_PAYPAL_CANCEL;
         String successUrl = PayPalUtils.getBaseURL(request) + "/" + URL_PAYPAL_SUCCESS;
         String paymentDescription = CommonConstant.PAYMENT_DESCRIPTION + totalPrice
                 + CommonConstant.ONE_SPACE + CommonConstant.CURRENCY;
         try {
             Payment payment = payPalService.createPayment(
-                    totalPrice,
+                    total,
                     CommonConstant.CURRENCY,
                     PayPalPaymentMethod.PAYPAL,
                     PayPalPaymentIntent.SALE,

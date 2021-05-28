@@ -3,6 +3,7 @@ package com.kiennt.alandung.controller;
 import com.kiennt.alandung.entity.Product;
 import com.kiennt.alandung.entity.UserLogin;
 import com.kiennt.alandung.service.ProductService;
+import com.kiennt.alandung.service.ShoppingCartService;
 import com.kiennt.alandung.service.UserLoginService;
 import com.kiennt.alandung.util.CommonConstant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class CycleController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ShoppingCartService shoppingCartService;
+
 
     @GetMapping("/")
     public ModelAndView index(Model model){
@@ -36,6 +40,8 @@ public class CycleController {
 
         List<Product> products = productService.getProducts();
         mav.addObject("products", products);
+        Integer numeberOfItemsInCart = shoppingCartService.getNumberOfItemsInCart();
+        mav.addObject("numberOfItem", numeberOfItemsInCart);
 
         return mav;
     }

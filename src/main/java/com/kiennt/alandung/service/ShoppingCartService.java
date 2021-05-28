@@ -6,7 +6,6 @@ import com.kiennt.alandung.repository.CartItemRepository;
 import com.kiennt.alandung.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -14,6 +13,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ShoppingCartService {
+
+    private static final Double SHIPPING_PRICE = 2.0;
 
     @Autowired
     private CartItemRepository cartItemRepository;
@@ -91,7 +92,7 @@ public class ShoppingCartService {
         }
     }
 
-    public Double getTotalPrice(List<CartItem> cartItems) {
+    public Double getSubTotalPrice(List<CartItem> cartItems) {
         List<Double> totalItems = new ArrayList<>();
         cartItems.forEach(cartItem -> {
             double totalItem = cartItem.getProduct().getPrice() * cartItem.getQuantity();
@@ -100,15 +101,25 @@ public class ShoppingCartService {
         return totalItems.stream().mapToDouble(Double::doubleValue).sum();
     }
 
+    public Double getTotalPrice(Double subTotal) {
+        return subTotal + SHIPPING_PRICE;
+    }
+
+    public Integer getNumberOfItemsInCart() {
+        return getCartItems().size();
+    }
+
     public ModelAndView getCartItemsPage() {
         List<CartItem> cartItems = getCartItemsByStatus(Status.PENDING);
         ModelAndView mav = new ModelAndView("cycle-cart");
         mav.addObject("cartItems", cartItems);
-        Double subTotal = getTotalPrice(cartItems);
+        Double subTotal = getSubTotalPrice(cartItems);
         mav.addObject("subTotal", subTotal);
-        Double shipping = 2.0;
-        mav.addObject("shipping", shipping);
-        mav.addObject("total", subTotal + shipping);
+        Double totalPrice = getTotalPrice(subTotal);
+        mav.addObject("shipping", SHIPPING_PRICE);
+        mav.addObject("total", totalPrice);
+        Integer numeberOfItemsInCart = getNumberOfItemsInCart();
+        mav.addObject("numberOfItem", numeberOfItemsInCart);
         return mav;
     }
 }
