@@ -32,6 +32,7 @@ import java.util.Optional;
 
 @Controller
 public class LoginController {
+    private static final String JWT_TOKEN_NAME = "jwtToken";
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -98,7 +99,7 @@ public class LoginController {
         Authentication authentication = authenticationService.setAuthentication(users.get(), request);
 
         String jwtToken = tokenProvider.generateToken(authentication);
-        CookieUtils.addCookie(response, "jwtToken", jwtToken);
+        CookieUtils.addCookie(response, JWT_TOKEN_NAME, jwtToken);
 
         if (authenticationService.getAuthentication() != null) {
             return "redirect:/management/product-list";
@@ -107,14 +108,16 @@ public class LoginController {
         return "redirect:/login-page";
     }
 
-    @PostMapping("/logout")
+    @GetMapping("/doLogout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = authenticationService.getAuthentication();
 
-        if(authentication != null) {
+        if (authentication != null) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
+            CookieUtils.deleteCookie(request, response, JWT_TOKEN_NAME);
+            return "redirect:/login-page?logout";
         }
-        return null;
+        return "redirect:/management/product-list?logout-failed";
     }
 
     @GetMapping("/403")

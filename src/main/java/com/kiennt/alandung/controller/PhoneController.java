@@ -16,28 +16,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class CycleController {
-
-    @Autowired
-    private UserLoginService userLoginService;
-
+public class PhoneController {
     @Autowired
     private ProductService productService;
 
     @Autowired
     private ShoppingCartService shoppingCartService;
 
-
     @GetMapping("/")
     public ModelAndView index(Model model){
         ModelAndView mav = new ModelAndView("index");
-        List<UserLogin> userLogins = userLoginService.getUserLogins();
-
-        Optional<UserLogin> userLogin = userLogins.stream().findFirst();
-
-        userLogin.ifPresent(user -> mav.addObject("userLogin", user.getFirstName().concat(CommonConstant.EMPTY_STRING)
-                .concat(user.getLastName())));
-
         List<Product> products = productService.getProducts();
         mav.addObject("products", products);
         Integer numeberOfItemsInCart = shoppingCartService.getNumberOfItemsInCart();

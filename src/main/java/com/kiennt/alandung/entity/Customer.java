@@ -92,6 +92,7 @@ public class Customer {
         this.message = message;
     }
 
+    @Transient
     public String getFullName() {
         return this.firstName + CommonConstant.ONE_SPACE + this.lastName;
     }

@@ -109,23 +109,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/product-list")//
                 .failureUrl("/login?error=true")//
                 .usernameParameter("email")//
-                .passwordParameter("password")
+                .passwordParameter("password");
                 // Config for Logout Page
-                .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login-page");
+//                .and().logout().logoutUrl("/doLogout").logoutSuccessUrl("/login-page");
 
         // Oauth2
-        http.oauth2Login()
-                    .loginPage("/login-page")
-                    .userInfoEndpoint()
-                    .userService(customOAuth2UserService)
-                .and()
-                .successHandler((request, response, authentication) -> {
-                    CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
-
-                    userLoginService.processOAuthPostLogin(oauthUser);
-
-                    response.sendRedirect("/");
-                });
+//        http.oauth2Login()
+//                    .loginPage("/login-page")
+//                    .userInfoEndpoint()
+//                    .userService(customOAuth2UserService)
+//                .and()
+//                .successHandler((request, response, authentication) -> {
+//                    CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
+//
+//                    userLoginService.processOAuthPostLogin(oauthUser);
+//
+//                    response.sendRedirect("/");
+//                });
 
         // Add our custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -6,6 +6,7 @@ import com.kiennt.alandung.entity.CartItem;
 import com.kiennt.alandung.entity.enums.Status;
 import com.kiennt.alandung.service.CustomerService;
 import com.kiennt.alandung.service.ShoppingCartService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,16 @@ public class ShoppingCartController {
     @GetMapping("/add-to-cart/{id}")
     public ModelAndView addToCart(@PathVariable("id") Long productId, CustomerDTO customerDTO) {
         shoppingCartService.addToCart(productId);
+        return shoppingCartService.getCartItemsPage();
+    }
+
+    @GetMapping("/delete-cart-item/{id}")
+    public ModelAndView deleteCartItem(@PathVariable("id") Long cartItemId, CustomerDTO customerDTO) throws NotFoundException {
+        CartItem cartItem = shoppingCartService.getCartItemById(cartItemId);
+        if (cartItem == null) {
+            throw new NotFoundException("CartItem not found");
+        }
+        shoppingCartService.deleteById(cartItemId);
         return shoppingCartService.getCartItemsPage();
     }
 

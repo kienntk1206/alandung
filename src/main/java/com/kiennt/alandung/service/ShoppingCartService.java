@@ -43,6 +43,12 @@ public class ShoppingCartService {
         return cartItemRepository.findAll();
     }
 
+    public List<CartItem> getCartItemsOrderedByCustomer() {
+        List<CartItem> cartItemsOrderedByCustomer = cartItemRepository.findAll().stream()
+                .filter(cartItem -> Objects.nonNull(cartItem.getCustomer())).collect(Collectors.toList());
+        return cartItemsOrderedByCustomer;
+    }
+
     public List<CartItem> getCartItemsByStatus(Status status) {
         if (status == null) {
             return cartItemRepository.findAll();
@@ -111,7 +117,7 @@ public class ShoppingCartService {
 
     public ModelAndView getCartItemsPage() {
         List<CartItem> cartItems = getCartItemsByStatus(Status.PENDING);
-        ModelAndView mav = new ModelAndView("cycle-cart");
+        ModelAndView mav = new ModelAndView("phone-cart");
         mav.addObject("cartItems", cartItems);
         Double subTotal = getSubTotalPrice(cartItems);
         mav.addObject("subTotal", subTotal);
@@ -121,5 +127,9 @@ public class ShoppingCartService {
         Integer numeberOfItemsInCart = getNumberOfItemsInCart();
         mav.addObject("numberOfItem", numeberOfItemsInCart);
         return mav;
+    }
+
+    public void deleteById(Long id) {
+        cartItemRepository.deleteById(id);
     }
 }

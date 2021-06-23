@@ -132,7 +132,7 @@ public class ManagementController {
             return new ModelAndView("redirect:/login-page");
         }
         ModelAndView mav = new ModelAndView("product/order-list");
-        List<CartItem> cartItems = shoppingCartService.getCartItems();
+        List<CartItem> cartItems = shoppingCartService.getCartItemsOrderedByCustomer();
         mav.addObject("service", shoppingCartService);
         mav.addObject("cartItems", cartItems);
         return mav;

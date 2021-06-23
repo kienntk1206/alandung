@@ -84,7 +84,7 @@
                                     <button class="btn btn-outline-success btn-block" id="update-quantity" th:onclick="'javascript:updateQuantity(' + ${cartItem.id} + ');'">Update</button>
                             </td>
                             <td class="text-right" th:text="${cartItem.product.price}"></td>
-                            <td class="text-right"><button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button> </td>
+                            <td class="text-right"><a th:href="@{/cart/delete-cart-item/{id}(id=${cartItem.id})}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a> </td>
                         </tr>
                         <tr>
                             <td></td>
@@ -135,6 +135,7 @@
 
 <!-- Button to Open the Modal -->
 <!-- The Modal -->
+<th:block th:if="${cartItems.size != 0}">
 <div class="modal" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -184,6 +185,7 @@
         </div>
     </div>
 </div>
+</th:block>
 <!--<div th:replace="fragment/cycle-copyright :: cycle-copyright"></div>-->
 <!--<script th:src="@{/cycle/js/jquery.min.js}"></script>-->
 <!--<script th:src="@{/cycle/js/popper.min.js}"></script>-->
