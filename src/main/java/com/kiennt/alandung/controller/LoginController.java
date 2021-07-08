@@ -1,8 +1,11 @@
 package com.kiennt.alandung.controller;
 
+import com.kiennt.alandung.dto.UserRegisterDTO;
+import com.kiennt.alandung.entity.Role;
 import com.kiennt.alandung.entity.User;
 import com.kiennt.alandung.entity.UserLogin;
 import com.kiennt.alandung.entity.enums.RoleName;
+import com.kiennt.alandung.payload.ApiResponse;
 import com.kiennt.alandung.repository.UserRepository;
 import com.kiennt.alandung.security.JwtTokenProvider;
 import com.kiennt.alandung.service.AuthenticationService;
@@ -11,6 +14,8 @@ import com.kiennt.alandung.util.CommonConstant;
 import com.kiennt.alandung.util.CookieUtils;
 import com.kiennt.alandung.util.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,11 +24,15 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.jws.WebParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
@@ -89,11 +98,13 @@ public class LoginController {
     @PostMapping("/login")
     @Transactional
     public String doLogin(@RequestParam("email") String email,
-                          @RequestParam("password") String password, HttpServletResponse response, HttpServletRequest request){
+                          @RequestParam("password") String password, HttpServletResponse response, HttpServletRequest request,
+                          RedirectAttributes redirectAttributes){
         Optional<User> users = userRepository.findByEmail(email);
 
         if(!users.isPresent() || !passwordEncoder.matches(password ,users.get().getPassword())) {
-            return null;
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid username password !!!");
+            return "redirect:/login-page";
         }
 
         Authentication authentication = authenticationService.setAuthentication(users.get(), request);
@@ -118,6 +129,45 @@ public class LoginController {
             return "redirect:/login-page?logout";
         }
         return "redirect:/management/product-list?logout-failed";
+    }
+
+    @PostMapping("/register")
+    @Transactional
+    public String doRegister(@ModelAttribute("userRegister") UserRegisterDTO userRegisterDTO, RedirectAttributes redirectAttributes){
+        if (userRegisterDTO.getEmail().isEmpty() || userRegisterDTO.getPassword().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please input email and password !!!");
+            return "redirect:/register-page";
+        }
+        if(userRepository.existsByUsername(userRegisterDTO.getEmail())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Username is exist !!!");
+            return "redirect:/register-page";
+        }
+
+        if (!userRegisterDTO.getConfirmPassword().equals(userRegisterDTO.getPassword())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Password must be match !!!");
+            return "redirect:/register-page";
+        }
+
+        // Creating user's account
+        User user = new User(userRegisterDTO.getName(), userRegisterDTO.getUsername(),
+                userRegisterDTO.getEmail(), userRegisterDTO.getPassword());
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role role = new Role();
+        role.setName(RoleName.ROLE_ADMIN);
+        user.getRoles().add(role);
+
+        userRepository.save(user);
+
+        return "redirect:/login-page";
+    }
+
+    @GetMapping("/register-page")
+    public ModelAndView viewRegisterPage() {
+        ModelAndView mav = new ModelAndView("register-admin");
+        UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
+        mav.addObject("userRegister", userRegisterDTO);
+        return mav;
     }
 
     @GetMapping("/403")

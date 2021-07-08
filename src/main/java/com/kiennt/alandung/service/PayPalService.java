@@ -27,14 +27,8 @@ public class PayPalService {
     @Value("${paypal.mode}")
     private String mode;
 
-    public Payment createPayment(
-            Double total,
-            String currency,
-            PayPalPaymentMethod method,
-            PayPalPaymentIntent intent,
-            String description,
-            String cancelUrl,
-            String successUrl) throws PayPalRESTException {
+    public Payment createPayment(Double total, String currency, PayPalPaymentMethod method, PayPalPaymentIntent intent,
+            String description, String cancelUrl, String successUrl) throws PayPalRESTException {
         Amount amount = new Amount();
         amount.setCurrency(currency);
         amount.setTotal(String.format("%.2f", total));

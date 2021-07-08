@@ -1,9 +1,12 @@
 package com.kiennt.alandung.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kiennt.alandung.entity.enums.RoleName;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by rajeevkumarsingh on 01/08/17.
@@ -12,13 +15,17 @@ import javax.persistence.*;
 @Table(name = "roles")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Enumerated(EnumType.STRING)
     @NaturalId
     @Column(length = 60)
     private RoleName name;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
+    private Set<User> users = new HashSet<>();
 
     public Role() {
 
@@ -44,4 +51,11 @@ public class Role {
         this.name = name;
     }
 
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
 }

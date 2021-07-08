@@ -50,13 +50,7 @@ public class AuthenticationService {
     }
 
     public Authentication getAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null) {
-            return authentication;
-        }
-
-        return null;
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
     public boolean checkUserHasRole(User user, List<RoleName> roleNames) {
@@ -68,11 +62,5 @@ public class AuthenticationService {
     public User getLoginedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (User) authentication.getPrincipal();
-    }
-
-    public boolean isAccessDenied() {
-        User loginedUser = getLoginedUser();
-        boolean hasPermission = checkUserHasRole(loginedUser, Collections.singletonList(RoleName.ROLE_ADMIN));
-        return !hasPermission;
     }
 }

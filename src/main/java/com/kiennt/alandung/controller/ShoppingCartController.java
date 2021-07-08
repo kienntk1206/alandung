@@ -62,7 +62,7 @@ public class ShoppingCartController {
         CartItem cartItem = shoppingCartService.getCartItemById(id);
         cartItem.setQuantity(quantity);
         shoppingCartService.upsertCartItem(cartItem);
-        Double subPrice = shoppingCartService.getSubTotalPrice(shoppingCartService.getCartItems());
+        Double subPrice = shoppingCartService.getSubTotalPrice(shoppingCartService.getCartItemsIsPending());
         CartResponseDTO cartResponse = new CartResponseDTO();
         cartResponse.setSubTotal(subPrice);
         cartResponse.setShipPrice(SHIPPING_PRICE);

@@ -43,6 +43,12 @@ public class ShoppingCartService {
         return cartItemRepository.findAll();
     }
 
+    public List<CartItem> getCartItemsIsPending() {
+        return cartItemRepository.findAll()
+                .stream().filter(cartItem -> cartItem.getStatus().equals(Status.PENDING))
+                .collect(Collectors.toList());
+    }
+
     public List<CartItem> getCartItemsOrderedByCustomer() {
         List<CartItem> cartItemsOrderedByCustomer = cartItemRepository.findAll().stream()
                 .filter(cartItem -> Objects.nonNull(cartItem.getCustomer())).collect(Collectors.toList());
@@ -112,7 +118,9 @@ public class ShoppingCartService {
     }
 
     public Integer getNumberOfItemsInCart() {
-        return getCartItems().size();
+        return getCartItems().stream()
+                .filter(cartItem -> cartItem.getStatus().equals(Status.PENDING))
+                .collect(Collectors.toList()).size();
     }
 
     public ModelAndView getCartItemsPage() {

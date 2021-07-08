@@ -39,6 +39,11 @@
         #quantity,#update-quantity,#checkout,#continue,#table-cart {
             font-size: 15px;
         }
+
+        #alert-success {
+            text-align: center;
+            font-size: 15px;
+        }
     </style>
 </head>
 <body>
@@ -56,6 +61,11 @@
         </div>
     </section>
     <h2 class="cycles_text" th:if="${cartItems.size == 0}">Cart is empty</h2>
+    <div class="container col-sm-6">
+        <div class="alert alert-success" role="alert" id="alert-success">
+            Update cart item successfully !!!
+        </div>
+    </div>
     <div class="container mb-4" th:if="${cartItems.size > 0}">
         <div class="row">
             <div class="col-12">
@@ -92,7 +102,7 @@
                             <td></td>
                             <td></td>
                             <td>Sub-Total</td>
-                            <td class="text-right" th:text="${subTotal}" id="subTotal"></td>
+                            <td class="text-right" th:text="${subTotal}" id="subTotal">$</td>
                         </tr>
                         <tr>
                             <td></td>
@@ -100,7 +110,7 @@
                             <td></td>
                             <td></td>
                             <td>Shipping</td>
-                            <td class="text-right" th:text="${shipping}" id="shipping"></td>
+                            <td class="text-right" th:text="${shipping}" id="shipping">$</td>
                         </tr>
                         <tr>
                             <td></td>
@@ -108,7 +118,7 @@
                             <td></td>
                             <td></td>
                             <td><strong>Total</strong></td>
-                            <td class="text-right"><strong th:text="${total}" id="total"></strong></td>
+                            <td class="text-right"><strong th:text="${total}" id="total"></strong>$</td>
                         </tr>
                         </tbody>
                     </table>
@@ -214,6 +224,7 @@
 <script th:src="@{/phone/js/index.js}"></script>
 <script th:src="@{/phone/js/slider.js}"></script>
 <script>
+    $('#alert-success').hide();
     function openNav() {
         document.getElementById("mySidenav").style.width = "250px";
         document.getElementById("main").style.marginLeft = "250px";
@@ -243,6 +254,8 @@
                 $('#subTotal').html(subTotal);
                 $('#shipping').html(shipPrice);
                 $('#total').html(total);
+                $('#alert-success').show();
+                setTimeout(function() { $('#alert-success').hide(); }, 3000);
             }
         });
     }
